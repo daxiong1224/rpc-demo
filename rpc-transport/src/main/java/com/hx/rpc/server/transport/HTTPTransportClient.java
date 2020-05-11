@@ -16,9 +16,15 @@ public class HTTPTransportClient implements TransportClient {
         this.url = "http://" + peer.getHost() + ":" + peer.getPort();
     }
 
+    /**
+     * 基于HTTP的网络传输
+     * @param data
+     * @return
+     */
     @Override
     public InputStream write(InputStream data) {
         try {
+            //建立http连接
             HttpURLConnection httpConn = (HttpURLConnection) new URL(url).openConnection();
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
@@ -26,10 +32,11 @@ public class HTTPTransportClient implements TransportClient {
             httpConn.setRequestMethod("POST");
             httpConn.connect();
 
+            //将data请求数据发送给该地址的服务
             IOUtils.copy(data, httpConn.getOutputStream());
-            int resultCode = httpConn.getResponseCode();
+            int resultCode = httpConn.getResponseCode();//获取返回的编码
             if (resultCode == HttpURLConnection.HTTP_OK) {
-                return httpConn.getInputStream();
+                return httpConn.getInputStream();//成功，从输入流中获取数据
             } else {
                 return httpConn.getErrorStream();
             }

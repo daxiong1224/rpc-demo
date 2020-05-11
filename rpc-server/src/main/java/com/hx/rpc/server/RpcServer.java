@@ -51,18 +51,24 @@ public class RpcServer {
         this.net.stop();
     }
 
+    /**
+     * 创建处理请求的handler
+     */
     private RequestHandler handler = new RequestHandler() {
         @Override
         public void onRequest(InputStream recive, OutputStream toResp) {
             Response resp = new Response();
             try {
+                //输入流反序列化成一个请求对象
                 byte[] inBytes = IOUtils.readFully(recive, recive.available());
                 Request request = decoder.decode(inBytes, Request.class);
 
                 log.info("get Request:", request);
 
+                //查找服务，并执行
                 ServiceInstance sis = serviceManager.lookup(request);
                 Object ret = serviceInvoker.invoker(sis, request);
+                //返回结果
                 resp.setData(ret);
             } catch (IOException e) {
                 log.warn(e.getMessage(), e);

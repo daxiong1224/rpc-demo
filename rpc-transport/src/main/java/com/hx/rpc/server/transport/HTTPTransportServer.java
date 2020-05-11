@@ -20,12 +20,15 @@ public class HTTPTransportServer implements TransportService{
     @Override
     public void init(int port, RequestHandler handler) {
         this.handler = handler;
+        //创建Jetty的服务
         this.service = new Server(port);
 
         //server 接受请求
         ServletContextHandler ctx = new ServletContextHandler();
-        service.setHandler(ctx);
+        service.setHandler(ctx);//注册到server中
 
+
+        //创建ServletHolder托管RequestServlet
         ServletHolder holder = new ServletHolder(new RequestServlet());
         ctx.addServlet(holder, "/*");
     }
@@ -34,7 +37,7 @@ public class HTTPTransportServer implements TransportService{
     public void start() {
         try {
             service.start();
-            service.join();
+            service.join();//使线程阻塞
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
@@ -53,6 +56,7 @@ public class HTTPTransportServer implements TransportService{
         }
 
     }
+
 
     class RequestServlet extends HttpServlet {
         @Override

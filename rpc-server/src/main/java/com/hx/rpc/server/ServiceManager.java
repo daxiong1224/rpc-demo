@@ -32,12 +32,19 @@ public class ServiceManager {
             ServiceInstance sis = new ServiceInstance(bean, method);
             ServiceDescriptor sdp = ServiceDescriptor.from(interfaceClass, method);
 
+            //将提供的具体服务设到map中
             services.put(sdp, sis);
             log.info("register service； {} {}", sdp.getClazz(), sdp.getMethod());
         }
     }
 
+    /**
+     * 查找服务
+     * @param request
+     * @return
+     */
     public ServiceInstance lookup(Request request) {
+        //根据服务的描述从map中查具体服务
         ServiceDescriptor sdp = request.getService();
         return services.get(sdp);
     }
